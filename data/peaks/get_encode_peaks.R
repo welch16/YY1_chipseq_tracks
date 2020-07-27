@@ -41,8 +41,21 @@ other_tfs <- peak_data %>%
       biosample_name, target, safely(safe_query_consensus),
         assembly = "GRCh38"))
 
+yy1_biosamples %<>%
+  dplyr::filter(purrr::map_lgl(peaks, ~ is.null(.$error))) %>%
+  dplyr::mutate(
+    peaks = purrr::map(peaks, "result"),
+    peaks = purrr::map(peaks, ENCODExplorer::peaks))
+
 yy1_biosamples %>%
   qs::qsave(here::here("data", "qs", "YY1_peaks_per_biosample.qs"))
 
+other_tfs %<>%
+  dplyr::filter(purrr::map_lgl(peaks, ~ is.null(.$error))) %>%
+  dplyr::mutate(
+    peaks = purrr::map(peaks, "result"),
+    peaks = purrr::map(peaks, ENCODExplorer::peaks))
+
 other_tfs %>%
+  tibble::as_tibble() %>%
   qs::qsave(here::here("data", "qs", "TFs_peaks_per_biosample.qs"))
