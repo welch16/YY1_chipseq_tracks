@@ -45,7 +45,7 @@ yy1_biosamples %<>%
   dplyr::filter(purrr::map_lgl(peaks, ~ is.null(.$error))) %>%
   dplyr::mutate(
     peaks = purrr::map(peaks, "result"),
-    peaks = purrr::map(peaks, ENCODExplorer::peaks))
+    peaks = purrr::map(peaks, ENCODExplorer::consensus))
 
 yy1_biosamples %>%
   qs::qsave(here::here("data", "qs", "YY1_peaks_per_biosample.qs"))
@@ -54,7 +54,7 @@ other_tfs %<>%
   dplyr::filter(purrr::map_lgl(peaks, ~ is.null(.$error))) %>%
   dplyr::mutate(
     peaks = purrr::map(peaks, "result"),
-    peaks = purrr::map(peaks, ENCODExplorer::peaks))
+    peaks = purrr::map(peaks, ENCODExplorer::consensus))
 
 other_tfs %>%
   tibble::as_tibble() %>%
