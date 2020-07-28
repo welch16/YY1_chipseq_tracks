@@ -10,7 +10,8 @@ peak_data <- encode_df %>%
 yy1_biosamples <- peak_data %>%
   dplyr::filter(target == "YY1") %>%
   dplyr::count(biosample_name, output_type) %>%
-  dplyr::filter(stringr::str_detect(output_type, "IDR"))
+  dplyr::filter(stringr::str_detect(output_type, "IDR")) %>%
+  dplyr::filter(biosample_name == "K562")
 
 safe_query_consensus <- function(name, tf, assembly = "GRCh38") {
   ENCODExplorer::queryConsensusPeaks(
@@ -28,18 +29,7 @@ yy1_biosamples %<>%
   dplyr::mutate(
     peaks = purrr::map(
       biosample_name, safely(safe_query_consensus), "YY1",
-      assembly = "GRCh38"))
-
-other_tfs <- peak_data %>%
-  dplyr::filter(stringr::str_detect(output_type, "IDR")) %>%
-  dplyr::filter(
-    biosample_name %in% yy1_biosamples[["biosample_name"]]) %>%
-  dplyr::filter(target != "YY1") %>%
-  dplyr::distinct(biosample_name, target) %>%
-  dplyr::mutate(
-    peaks = purrr::map2(
-      biosample_name, target, safely(safe_query_consensus),
-        assembly = "GRCh38"))
+      assembly = "hg19"))
 
 yy1_biosamples %<>%
   dplyr::filter(purrr::map_lgl(peaks, ~ is.null(.$error))) %>%
@@ -50,6 +40,23 @@ yy1_biosamples %<>%
 yy1_biosamples %>%
   qs::qsave(here::here("data", "qs", "YY1_peaks_per_biosample.qs"))
 
+
+other_tfs <- peak_data %>%
+  dplyr::filter(stringr::str_detect(output_type, "IDR")) %>%
+  dplyr::filter(
+    biosample_name %in% yy1_biosamples[["biosample_name"]]) %>%
+  dplyr::filter(target != "YY1") %>%
+  dplyr::distinct(biosample_name, target) %>%
+  tibble::as_tibble()
+  
+other_tfs %<>%
+  dplyr::filter(target %in% c("SPI1", "IKZF1", "RUNX1")) %>%
+  dplyr::mutate(
+    peaks = purrr::map2(
+      biosample_name, target, safely(safe_query_consensus),
+        assembly = "hg19"))
+
+
 other_tfs %<>%
   dplyr::filter(purrr::map_lgl(peaks, ~ is.null(.$error))) %>%
   dplyr::mutate(
@@ -57,5 +64,4 @@ other_tfs %<>%
     peaks = purrr::map(peaks, ENCODExplorer::consensus))
 
 other_tfs %>%
-  tibble::as_tibble() %>%
   qs::qsave(here::here("data", "qs", "TFs_peaks_per_biosample.qs"))
