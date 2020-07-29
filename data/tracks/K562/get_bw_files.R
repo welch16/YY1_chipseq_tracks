@@ -17,4 +17,5 @@ tf_data <- encode_df %>%
 ENCODExplorer::downloadEncode(tf_data, format = "bigWig")
 
 tf_data %>%
+  tibble::as_tibble() %>%
   qs::qsave(here::here("data", "qs", "TFs_bigwig_K562.qs"))

@@ -3,6 +3,7 @@ workdr=/ua/rwelch/Documents/CISR/YY1_chipseq_tracks
 
 chip_file=yy1_chip.bw
 input_file=yy1_input.bw
+chr_sizes=hg19.chrom.sizes
 
 bw2bg="$workdr/tools/bigWigToBedGraph"
 

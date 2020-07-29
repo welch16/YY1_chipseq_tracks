@@ -1,4 +1,7 @@
 *gz
 data/qs/*
 data/tracks
+data/figs
+data/out
+data/peaks
 tools/*
