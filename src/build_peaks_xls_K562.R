@@ -8,17 +8,21 @@ yy1_biosamples <-
 peaks <- purrr::pluck(yy1_biosamples, "peaks", 1) %>% unlist()
 ww <- 10e3
 
+create_link <- function(chrom, start, end, ww = 0) {
+
+  glue::glue(
+    "https://genome.ucsc.edu/cgi-bin/hgTracks?hgS_doOtherUser=submit&hgS_otherUserName=welch16&hgS_otherUserSessionName=YY1_peaks&position={chr}%3A{start}%2D{end}",
+    chr = chrom,
+    start = start - ww,
+    end = end + ww)
+}
 
 peaks_table <- tibble::tibble(
   chrom = as.character(GenomicRanges::seqnames(peaks)),
   start = GenomicRanges::start(peaks),
   end =   GenomicRanges::end(peaks)) %>%
   dplyr::mutate(
-    link = glue::glue(
-  "https://genome.ucsc.edu/cgi-bin/hgTracks?hgS_doOtherUser=submit&hgS_otherUserName=welch16&hgS_otherUserSessionName=YY1_peaks&position={chr}%3A{start}%2D{end}",
-    chr = chrom,
-    start = start - ww,
-    end = end + ww))
+    link = create_link(chrom, start, end, ww))
 
 
 # /hgTracks?hgS_doOtherUser=submit&hgS_otherUserName=welch16&hgS_otherUserSessionName=YY1_peaks
@@ -27,3 +31,7 @@ peaks_table <- tibble::tibble(
 
 peaks_table %>%
   readr::write_csv(here::here("data", "out", "K562_peaks.csv"))
+
+# NOTCH1 enhancer area
+create_link("chr9", 139364317, 139459993)
+ 

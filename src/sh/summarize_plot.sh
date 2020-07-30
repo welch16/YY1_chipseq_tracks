@@ -1,10 +1,12 @@
 
-workdr=/ua/rwelch/Documents/CISR/YY1_chipseq_tracks/data/figs
+workdr=/z/Comp/uwcccseq/rwelch/zz_other_collab/YY1_chipseq_tracks/data/figs
 
 dirj="$workdr/Jurkat"
 dirk="$workdr/K562"
 w=10000
 wk="10K"
+dpi=1000
+
 
 pal=Blues
 
@@ -23,7 +25,8 @@ plotHeatmap -m "$dirj/matrix.mat.gz" \
      --zMin 0 --zMax 10 \
      --startLabel "s. - $wk" \
      --endLabel "s. + $wk" \
-     --xAxisLabel "distance to summit (bp)"
+     --xAxisLabel "distance to summit (bp)" \
+     --dpi $dpi
 
 computeMatrix scale-regions -S "$dirk/YY1_K562_rep0.bigWig" \
                                "$dirk/RUNX1_K562_rep0.bigWig" \
@@ -42,13 +45,11 @@ plotHeatmap -m "$dirk/matrix.mat.gz" \
      --endLabel "s. + $wk" \
      --zMin 0 --zMax 10 \
      --xAxisLabel "distance to summit (bp)" \
-     --kmeans 4
-
-   
+     --kmeans 4 \
+     --dpi $dpi
 
 w=500
 wk="500"
-
 pal=Blues
 
 computeMatrix scale-regions -S "$dirk/YY1_K562_rep0.bigWig" \
@@ -68,7 +69,9 @@ plotHeatmap -m "$dirk/matrix_mini.mat.gz" \
      --endLabel "s. + $wk" \
      --zMin 0 --zMax 10 \
      --xAxisLabel "distance to summit (bp)" \
-     --kmeans 4
+     --kmeans 4 \
+     --dpi $dpi
+
 
 computeMatrix scale-regions -S "$dirj/YY1_Jurkat_rep0.bigWig" \
                  "$dirj/RUNX1_Jurkat_rep0.bigWig" \
@@ -85,4 +88,5 @@ plotHeatmap -m "$dirj/matrix_mini.mat.gz" \
      --zMin 0 --zMax 10 \
      --startLabel "s. - $wk" \
      --endLabel "s. + $wk" \
-     --xAxisLabel "distance to summit (bp)"
+     --xAxisLabel "distance to summit (bp)" \
+     --dpi $dpi
