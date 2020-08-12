@@ -5,3 +5,4 @@ data/figs
 data/out
 data/peaks
 tools/*
+rmd/*
