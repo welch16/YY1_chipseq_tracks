@@ -2,11 +2,14 @@
 pacman::p_load(magrittr, tidyverse, ENCODExplorer)
 encode_df <- get_encode_df()
 
+targets <- c("YY1", "SPI1", "IKZF1", "RUNX1",
+  "GFI1B", "GATA2", "ERF", "MEIS2")
+
 
 # explore the possible data
 tf_data <- encode_df %>%
   dplyr::filter(biosample_name == "K562") %>%
-  dplyr::filter(target %in% c("YY1", "SPI1", "IKZF1", "RUNX1")) %>%
+  dplyr::filter(target %in% targets) %>%
   dplyr::filter(assembly == "hg19") %>%
   dplyr::filter(stringr::str_detect(output_type, "fold change")) %>%
   dplyr::filter(technical_replicates == "1_1; 2_1") %>%
