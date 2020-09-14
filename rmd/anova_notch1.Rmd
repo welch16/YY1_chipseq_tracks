@@ -140,18 +140,22 @@ where:
 - $\alpha_i$ is the average signal effect for TF $i$
 - $\beta_j$ is the average signal effect at location $j$
 
-If we do an ANOVA analysis for those two window sizes we can notice, that in both cases there is a significant location effect, but not a TF effect. This is not surprsing, since the TF peaks are constrained only to few locations.
+If we do an ANOVA analysis for those two window sizes we can notice, that in both cases there is a significant location effect, but not a TF effect. This is not surprsing, as the TF peaks are specific to few locations. On the other hand, by design we are picking locations in the genome with a peak for one of the TFs of interest, so it is expected to not see a TF effect, since there is no TF with peaks at almost all locations. Finally, for this analysis we only utilized one track per TF, so unfortunately is impossible to estimate any interaction effects, perhaps if we had biological replicates it will be possible.
 
-```{r anova-tables, results = "hold"}
+```{r anova-tables, echo = FALSE}
 
 clean_table <- function(x) {
 
   mutate(x,
-    across(where(is.double),
-      list( ~ if_else(is.na(.), "", scales::scientific(.)
-      )))) %>%
-    select(-where(is.double)) %>%
-    rename_all(list( ~ str_remove(., "_1")))
+    term = case_when(
+      term == "target" ~ "TF",
+      term == "peak" ~ "location",
+      TRUE ~ term),
+    sumsq = scales::comma(sumsq, .01),
+    meansq = round(meansq, 2),
+    statistic = if_else(is.na(statistic), "",
+      as.character(round(statistic, 4))),
+    p.value = if_else(is.na(p.value), "", scales::scientific(p.value)))
 
 }
 
@@ -161,7 +165,19 @@ tables <- peak_signal %>%
   map(clean_table) %>%
   map(knitr::kable)
 
+```
+
+## anova-1K {-#anova-1k}
+
+```{r anova-1Kw, include = TRUE, echo = FALSE, eval = TRUE}
+
 tables[[1]]
+
+```
+
+## anova-2K {-#anova-2k}
+
+```{r anova-2Kw, include = TRUE, echo = FALSE, eval = TRUE}
 
 tables[[2]]
 
